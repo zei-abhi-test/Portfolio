@@ -2,7 +2,7 @@
 
 A single-page personal portfolio styled as a retro **UEFI/BIOS setup utility** — built with plain HTML, CSS, and vanilla JS. No frameworks, no build step.
 
-**Live site:** __
+**Live site:** _https://abhishek-v1.netlify.app_
 
 ## Preview
 
