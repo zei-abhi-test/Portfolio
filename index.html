@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABHISHEK B K — SYSTEM SETUP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080b10;
+    --panel:#0d1219;
+    --panel-2:#111823;
+    --border:#212b38;
+    --border-soft:#182029;
+    --text:#c7d2dc;
+    --muted:#5b6673;
+    --amber:#ffb454;
+    --cyan:#5eead4;
+    --red:#ff6b6b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'JetBrains Mono',monospace;
+    font-size:14px;
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:repeating-linear-gradient(rgba(255,255,255,0.015) 0 1px, transparent 1px 3px);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+    background:radial-gradient(ellipse at 50% 0%, rgba(94,234,212,0.05), transparent 60%);
+  }
+
+  #boot{
+    position:fixed;inset:0;background:#080b10;z-index:100;
+    display:flex;align-items:center;justify-content:center;
+    transition:opacity .6s ease;
+  }
+  #boot pre{color:var(--cyan);font-size:13px;line-height:1.7;opacity:.9}
+  #boot .cur{display:inline-block;width:8px;background:var(--cyan);animation:blink 1s step-start infinite}
+  #boot.hide{opacity:0;pointer-events:none}
+
+  .frame{
+    width:100%;max-width:920px;border:1px solid var(--border);
+    background:var(--panel);position:relative;z-index:2;
+    box-shadow:0 40px 100px -30px rgba(0,0,0,.7);
+    opacity:0;transform:translateY(8px);
+    animation:rise .5s ease forwards;
+    animation-delay:1.9s;
+  }
+  @keyframes rise{to{opacity:1;transform:none}}
+
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 20px;border-bottom:1px solid var(--border);
+    background:var(--panel-2);font-size:12px;color:var(--muted);
+    letter-spacing:.5px;
+  }
+  .topbar b{color:var(--amber);font-weight:500}
+  .rec{color:var(--red)}
+  .rec::before{content:"●";margin-right:5px;animation:blink 1.4s step-start infinite}
+
+  .layout{display:flex;min-height:440px}
+  nav{width:230px;border-right:1px solid var(--border);padding:18px 0;flex-shrink:0}
+  nav .tab{
+    padding:10px 22px;cursor:pointer;color:var(--muted);
+    border-left:2px solid transparent;font-size:13px;letter-spacing:.5px;
+    transition:background .15s,color .15s,border-color .15s;
+    user-select:none;
+  }
+  nav .tab:hover{background:rgba(255,255,255,.02);color:var(--text)}
+  nav .tab.active{color:var(--amber);border-left-color:var(--amber);background:rgba(255,180,84,.06)}
+  nav .tab .n{color:var(--muted);margin-right:8px}
+  nav .tab.active .n{color:var(--amber)}
+
+  main{flex:1;padding:26px 30px;position:relative;min-width:0}
+  .panel{display:none;animation:fade .35s ease}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  h1{color:var(--amber);font-size:22px;font-weight:700;letter-spacing:.5px}
+  .role{color:var(--cyan);font-size:13px;margin:4px 0 14px}
+  .cursor{display:inline-block;width:8px;background:var(--cyan);animation:blink 1s step-start infinite;margin-left:2px}
+  @keyframes blink{50%{opacity:0}}
+
+  .contact{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--muted);margin-bottom:16px}
+  .contact a{color:var(--text);text-decoration:none;border-bottom:1px solid var(--border-soft)}
+  .contact a:hover{color:var(--cyan);border-color:var(--cyan)}
+
+  .hr{border-top:1px dashed var(--border);margin:16px 0}
+  h2{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
+  h2::before{content:"// ";color:var(--border)}
+  p{line-height:1.7;color:var(--text);font-size:13px}
+
+  table.hw{width:100%;border-collapse:collapse;font-size:12.5px}
+  table.hw td{padding:7px 8px;border-bottom:1px solid var(--border-soft);vertical-align:top}
+  table.hw td:first-child{color:var(--muted);width:120px;white-space:nowrap}
+  table.hw td:last-child{color:var(--text)}
+  .ok{color:var(--cyan);font-size:11px;float:right}
+
+  .log{font-size:12.5px}
+  .log .head{color:var(--muted);margin:16px 0 4px}
+  .log .head:first-child{margin-top:0}
+  .log .head .tag{color:var(--cyan)}
+  .log .stack{color:var(--muted);margin:2px 0 6px}
+  .log ul{list-style:none;margin-left:6px}
+  .log li{color:var(--text);padding:2px 0}
+  .log li::before{content:"↳ ";color:var(--border)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  ul.plain{list-style:none}
+  ul.plain li{padding:4px 0;color:var(--text);font-size:13px}
+  ul.plain li::before{content:"› ";color:var(--amber)}
+
+  .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+  .btn{
+    border:1px solid var(--border-soft);padding:10px 18px;color:var(--text);
+    text-decoration:none;font-size:12.5px;letter-spacing:.5px;
+    transition:border-color .15s,color .15s,background .15s;
+  }
+  .btn:hover{border-color:var(--amber);color:var(--amber);background:rgba(255,180,84,.05)}
+  .btn.alt:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(94,234,212,.05)}
+
+  .foot{
+    border-top:1px solid var(--border);padding:10px 20px;
+    display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);
+    background:var(--panel-2);letter-spacing:.5px;flex-wrap:wrap;gap:6px;
+  }
+  .foot span b{color:var(--amber)}
+
+  @media(max-width:680px){
+    .layout{flex-direction:column}
+    nav{width:100%;display:flex;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);padding:10px 6px}
+    nav .tab{border-left:none;border-bottom:2px solid transparent;white-space:nowrap}
+    nav .tab.active{border-bottom-color:var(--amber)}
+    .grid2{grid-template-columns:1fr}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<div id="boot"><pre id="bootText"></pre></div>
+
+<div class="frame">
+  <div class="topbar">
+    <span><b>ABHISHEK.SYS</b> — SETUP UTILITY v3.1</span>
+    <span class="rec" id="clock">00:00:00</span>
+  </div>
+
+  <div class="layout">
+    <nav id="nav">
+      <div class="tab active" data-p="p1"><span class="n">01</span>OVERVIEW</div>
+      <div class="tab" data-p="p2"><span class="n">02</span>HARDWARE</div>
+      <div class="tab" data-p="p3"><span class="n">03</span>BOOT LOG</div>
+      <div class="tab" data-p="p4"><span class="n">04</span>SYSTEM INFO</div>
+      <div class="tab" data-p="p5"><span class="n">05</span>CONTACT</div>
+    </nav>
+
+    <main>
+      <div class="panel active" id="p1">
+        <h1>ABHISHEK B K<span class="cursor">&nbsp;</span></h1>
+        <div class="role">Software Engineering Student</div>
+        <div class="contact">
+          <span>Bengaluru, India</span>
+        </div>
+        <div class="hr"></div>
+        <h2>Summary</h2>
+        <p>Software Engineering student with experience building full-stack web applications using React, Node.js, Express.js, Flask, MongoDB, and PostgreSQL. Strong foundation in REST APIs, database design, and responsive UI development. Passionate about solving real-world problems through scalable software and continuous learning.</p>
+      </div>
+
+      <div class="panel" id="p2">
+        <h2>Detected components</h2>
+        <table class="hw">
+          <tr><td>LANGUAGES</td><td>JavaScript, Python, Java, C, HTML5, CSS3 <span class="ok">[OK]</span></td></tr>
+          <tr><td>FRONTEND</td><td>React.js, Vite, Bootstrap <span class="ok">[OK]</span></td></tr>
+          <tr><td>BACKEND</td><td>Node.js, Express.js, Flask <span class="ok">[OK]</span></td></tr>
+          <tr><td>DATABASE</td><td>MongoDB, PostgreSQL, MySQL <span class="ok">[OK]</span></td></tr>
+          <tr><td>TOOLS</td><td>Git, GitHub, Postman, VS Code, REST APIs, JWT <span class="ok">[OK]</span></td></tr>
+        </table>
+      </div>
+
+      <div class="panel" id="p3">
+        <h2>Project execution log</h2>
+        <div class="log">
+          <div class="head"><span class="tag">[ OK ]</span> Contract Renewal Management System</div>
+          <div class="stack">React · Flask · PostgreSQL</div>
+          <ul>
+            <li>Automated contract renewal tracking, reducing manual monitoring effort.</li>
+            <li>CRUD operations with PostgreSQL and automated email reminders for expiring contracts.</li>
+            <li>Responsive dashboards with search for faster contract access.</li>
+          </ul>
+
+          <div class="head"><span class="tag">[ OK ]</span> Online Book Store Backend</div>
+          <div class="stack">Node.js · Express.js · MongoDB</div>
+          <ul>
+            <li>REST APIs for managing books, users, and orders.</li>
+            <li>MVC architecture for improved scalability and maintainability.</li>
+          </ul>
+
+          <div class="head"><span class="tag">[ OK ]</span> AI Marketplace Assistant — Hackathon</div>
+          <div class="stack">React · AI APIs · 3-member team</div>
+          <ul>
+            <li>Built an AI-powered marketplace assistant for local artisans.</li>
+            <li>Responsive interfaces and AI-assisted workflows for simpler product listing.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel" id="p4">
+        <div class="grid2">
+          <div>
+            <h2>Education</h2>
+            <ul class="plain">
+              <li>B.Tech, Software Engineering</li>
+              <li>Kalvium × RV University</li>
+              <li>Expected graduation: 2029</li>
+            </ul>
+            <div class="hr"></div>
+            <h2>Certifications</h2>
+            <ul class="plain">
+              <li>Responsive Web Design</li>
+              <li>JavaScript</li>
+              <li>React</li>
+              <li>Python</li>
+            </ul>
+          </div>
+          <div>
+            <h2>Achievements</h2>
+            <ul class="plain">
+              <li>Built multiple full-stack academic projects with modern web tech.</li>
+              <li>Practiced Data Structures &amp; Algorithms through coding challenges.</li>
+              <li>Comfortable with Git-based collaborative workflows.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="p5">
+        <h2>Establish connection</h2>
+        <table class="hw">
+          <tr><td>PHONE</td><td>+91 9739594353</td></tr>
+          <tr><td>EMAIL</td><td>bnks.abhishek@email.com</td></tr>
+          <tr><td>LOCATION</td><td>Bengaluru, India</td></tr>
+        </table>
+        <div class="cta">
+          <a class="btn" href="https://github.com/zei-abhi-test" target="_blank">GITHUB ↗</a>
+          <a class="btn alt" href="https://linkedin.com/in/abhishek-bk-38a3311aa" target="_blank">LINKEDIN ↗</a>
+          <a class="btn alt" href="mailto:bnks.abhishek@email.com">EMAIL ↗</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="foot">
+    <span><b>↑↓</b> Navigate &nbsp; <b>ENTER</b> Select &nbsp; <b>ESC</b> Exit</span>
+    <span>PORTFOLIO BUILD 2026.07</span>
+  </div>
+</div>
+
+<script>
+  const lines=["BIOS Version 3.1 — ABHISHEK-BK","Initializing profile.sys ......... OK","Loading skills.dat ................ OK","Mounting projects.img ............. OK","Verifying credentials ............. OK","","Starting ABHISHEK.SYS"];
+  const bootEl=document.getElementById('bootText');
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced){document.getElementById('boot').classList.add('hide');}
+  else{
+    let out="";let li=0;
+    function typeLine(){
+      if(li>=lines.length){setTimeout(()=>document.getElementById('boot').classList.add('hide'),300);return;}
+      const line=lines[li];let ci=0;
+      const iv=setInterval(()=>{
+        out+=line[ci]||"";
+        bootEl.innerHTML=out+'<span class="cur">&nbsp;</span>';
+        ci++;
+        if(ci>=line.length){clearInterval(iv);out+="\n";li++;setTimeout(typeLine,90);}
+      },14);
+    }
+    typeLine();
+  }
+
+  const tabs=document.querySelectorAll('.tab');
+  const panels=document.querySelectorAll('.panel');
+  tabs.forEach(t=>t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.classList.remove('active'));
+    panels.forEach(p=>p.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.p).classList.add('active');
+  }));
+
+  function tick(){
+    const d=new Date();
+    const p=n=>String(n).padStart(2,'0');
+    document.getElementById('clock').textContent=p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+  }
+  tick();setInterval(tick,1000);
+</script>
+</body>
+</html>
